@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cold-Retrieval Randomizer</title>
+<style>
+  :root{
+    --bg:#0e1116; --panel:#171c24; --panel2:#1f2630; --line:#2a333f;
+    --text:#e8edf4; --muted:#9aa7b6; --accent:#5b8cff;
+    --green:#3fb950; --red:#f85149; --amber:#d29922;
+    --radius:14px; --gap:16px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  .wrap{max-width:860px;margin:0 auto;padding:18px 16px 60px;}
+  h1{font-size:20px;margin:0 0 2px;}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 18px;}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin-bottom:var(--gap);}
+  /* KEY DISPLAY */
+  .stage{text-align:center;padding:26px 14px;background:linear-gradient(180deg,var(--panel2),var(--panel));}
+  .stage .label{color:var(--muted);font-size:12px;letter-spacing:.14em;text-transform:uppercase;}
+  .key{font-size:84px;font-weight:800;line-height:1;margin:6px 0 2px;letter-spacing:-.02em;}
+  .ctx{color:var(--muted);font-size:15px;margin-bottom:14px;}
+  .chords{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:8px;}
+  .chip{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:20px;font-weight:600;}
+  .chip .deg{display:block;font-size:11px;color:var(--muted);font-weight:500;margin-top:2px;}
+  .badges{display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap;}
+  .badge{font-size:12px;padding:5px 10px;border-radius:999px;border:1px solid var(--line);background:var(--panel2);color:var(--muted);}
+  .badge.type{color:var(--accent);border-color:var(--accent);}
+  .disrupt{margin-top:12px;color:var(--amber);font-size:14px;min-height:18px;font-weight:600;}
+  /* COUNTDOWN */
+  .bar{height:6px;background:var(--panel2);border-radius:4px;overflow:hidden;margin-top:16px;}
+  .bar > i{display:block;height:100%;width:100%;background:var(--accent);transition:width .1s linear;}
+  /* BUTTONS */
+  .btns{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;}
+  button{font:inherit;cursor:pointer;border:none;border-radius:10px;padding:14px 16px;font-weight:600;color:#fff;background:var(--panel2);border:1px solid var(--line);color:var(--text);}
+  button:active{transform:translateY(1px);}
+  .big{flex:1;min-width:160px;font-size:17px;background:var(--accent);border-color:var(--accent);}
+  .ok{background:var(--green);border-color:var(--green);flex:1;}
+  .no{background:var(--red);border-color:var(--red);flex:1;}
+  .ghost{background:transparent;}
+  /* CONTROLS */
+  .row{display:flex;gap:var(--gap);flex-wrap:wrap;}
+  .col{flex:1;min-width:240px;}
+  label.fld{display:block;font-size:12px;color:var(--muted);margin:0 0 6px;text-transform:uppercase;letter-spacing:.08em;}
+  select,input[type=range]{width:100%;}
+  select{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:11px;font:inherit;}
+  .inline{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:10px 0;}
+  .switch{display:flex;align-items:center;gap:8px;font-size:14px;}
+  .met{display:flex;align-items:center;gap:14px;}
+  .beats{display:flex;gap:8px;}
+  .beat{width:16px;height:16px;border-radius:50%;background:var(--panel2);border:1px solid var(--line);}
+  .beat.on{background:var(--accent);} .beat.acc.on{background:var(--amber);}
+  .bpm{font-size:28px;font-weight:800;min-width:70px;text-align:center;}
+  /* STATS */
+  .stats{display:flex;gap:10px;flex-wrap:wrap;}
+  .stat{flex:1;min-width:90px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px;text-align:center;}
+  .stat b{display:block;font-size:30px;line-height:1;}
+  .stat span{color:var(--muted);font-size:12px;}
+  .hist{max-height:190px;overflow:auto;margin-top:12px;font-size:13px;}
+  .hist table{width:100%;border-collapse:collapse;}
+  .hist th,.hist td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);color:var(--muted);}
+  .hist td{color:var(--text);}
+  .ritual{font-size:14px;color:var(--muted);line-height:1.7;}
+  .ritual b{color:var(--text);}
+  .mini{font-size:12px;color:var(--muted);}
+  .kbd{font-family:monospace;background:var(--panel2);border:1px solid var(--line);border-radius:5px;padding:1px 6px;}
+  a{color:var(--accent);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🎹 Cold-Retrieval Randomizer</h1>
+  <p class="sub">Truly random keys · no circle-of-4ths neighbors · blind-jump · 80 bpm gate · clean/miss scoreboard. Built for v8 §D.</p>
+
+  <!-- STAGE -->
+  <div class="card stage">
+    <div class="label">Land on</div>
+    <div class="key" id="keyName">C</div>
+    <div class="ctx" id="ctx">Major ii-V-I</div>
+    <div class="chords" id="chords"></div>
+    <div class="badges">
+      <span class="badge type" id="typeBadge">Type A</span>
+      <span class="badge" id="ritualBadge">cold · in a beat · sing it</span>
+    </div>
+    <div class="disrupt" id="disrupt"></div>
+    <div class="bar"><i id="countFill"></i></div>
+    <div class="btns">
+      <button class="big" id="nextBtn">⟲ Blind Jump (Space)</button>
+    </div>
+    <div class="btns">
+      <button class="ok" id="cleanBtn">✓ Clean (C)</button>
+      <button class="no" id="missBtn">✗ Miss (M)</button>
+    </div>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="card">
+    <div class="row">
+      <div class="col">
+        <label class="fld" for="family">Progression family</label>
+        <select id="family"></select>
+        <div class="inline"><span class="switch"><input type="checkbox" id="avoid4" checked> Avoid 4th/5th neighbours (break the conveyor belt)</span></div>
+        <div class="inline"><span class="switch"><input type="checkbox" id="noRepeat" checked> No immediate key repeat</span></div>
+        <div class="inline"><span class="switch"><input type="checkbox" id="disruptOn" checked> Random “comfort = disrupt” prompts</span></div>
+      </div>
+      <div class="col">
+        <label class="fld">Auto-advance (flasher)</label>
+        <div class="inline">
+          <span class="switch"><input type="checkbox" id="autoOn"> Flash a new key every</span>
+          <span><b id="autoSecLbl">30</b>s</span>
+        </div>
+        <input type="range" id="autoSec" min="10" max="90" step="5" value="30" />
+        <label class="fld" style="margin-top:14px;">Metronome</label>
+        <div class="met">
+          <button id="metBtn">▶ Start</button>
+          <div class="beats"><div class="beat acc"></div><div class="beat"></div><div class="beat"></div><div class="beat"></div></div>
+          <div class="bpm" id="bpmLbl">80</div>
+        </div>
+        <input type="range" id="bpm" min="40" max="160" step="1" value="80" style="margin-top:8px;" />
+      </div>
+    </div>
+  </div>
+
+  <!-- SCOREBOARD -->
+  <div class="card">
+    <label class="fld">This session</label>
+    <div class="stats">
+      <div class="stat"><b id="sJumps">0</b><span>jumps</span></div>
+      <div class="stat"><b id="sClean" style="color:var(--green)">0</b><span>clean</span></div>
+      <div class="stat"><b id="sMiss" style="color:var(--red)">0</b><span>miss</span></div>
+      <div class="stat"><b id="sPct">—</b><span>clean %</span></div>
+    </div>
+    <div class="btns">
+      <button class="ghost" id="saveBtn">💾 Save session to log</button>
+      <button class="ghost" id="resetBtn">Reset session</button>
+    </div>
+    <label class="fld" style="margin-top:16px;">Retrieval log (saved on this device)</label>
+    <div class="hist" id="hist"></div>
+    <div class="btns"><button class="ghost mini" id="clearBtn">Clear all history</button></div>
+  </div>
+
+  <!-- RITUAL -->
+  <div class="card">
+    <label class="fld">The 3-step re-entry ritual</label>
+    <div class="ritual">
+      <b>1.</b> Hear the tonic.&nbsp; <b>2.</b> Say the chord + its 3rd &amp; 7th out loud.&nbsp; <b>3.</b> Build the split-hand voicing + line — <b>no stopping, no run-up.</b><br>
+      Sing what you play · switch Type A↔B unannounced · <b>80 bpm is the gate, not top speed</b> · if you had a run-up, it didn’t count.
+    </div>
+    <p class="mini" style="margin-top:12px;">Shortcuts: <span class="kbd">Space</span> blind jump · <span class="kbd">C</span> clean · <span class="kbd">M</span> miss. Count clean re-entries, not minutes — stop when they get sloppy.</p>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var SHARP=['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','B'];
+  var FLAT =['C','D♭','D','E♭','E','F','G♭','G','A♭','A','B♭','B'];
+  var KEYS=[
+    {name:'C',pc:0,acc:'flat'},{name:'F',pc:5,acc:'flat'},{name:'B♭',pc:10,acc:'flat'},
+    {name:'E♭',pc:3,acc:'flat'},{name:'A♭',pc:8,acc:'flat'},{name:'D♭',pc:1,acc:'flat'},
+    {name:'G♭',pc:6,acc:'flat'},{name:'G',pc:7,acc:'sharp'},{name:'D',pc:2,acc:'sharp'},
+    {name:'A',pc:9,acc:'sharp'},{name:'E',pc:4,acc:'sharp'},{name:'B',pc:11,acc:'sharp'}
+  ];
+  var SINGLE=['maj7','m7','7','m7♭5','7alt','m6','7sus4'];
+  var FAMILIES={
+    'minor':   {label:'Minor ii-V-i  (iiø–V7♭9–i)', min:true,  ch:[[2,'m7♭5','iiø'],[7,'7♭9','V'],[0,'m6','i']]},
+    'major':   {label:'Major ii-V-I', min:false, ch:[[2,'m7','ii'],[7,'7','V'],[0,'maj7','I']]},
+    'sus':     {label:'7sus → V → I  (CCM)', min:false, ch:[[7,'7sus4','Vsus'],[7,'7','V'],[0,'maj7','I']]},
+    'viIVIV':  {label:'vi–IV–I–V  (CCM)', min:false, ch:[[9,'m','vi'],[5,'','IV'],[0,'','I'],[7,'','V']]},
+    'IVviIV':  {label:'I–V–vi–IV  (CCM)', min:false, ch:[[0,'','I'],[7,'','V'],[9,'m','vi'],[5,'','IV']]},
+    'IVivI':   {label:'IV–iv–I  (borrowed minor)', min:false, ch:[[5,'','IV'],[5,'m','iv'],[0,'','I']]},
+    'IIII7vi': {label:'I–III7–vi', min:false, ch:[[0,'','I'],[4,'7','III7'],[9,'m','vi']]},
+    'single':  {label:'Single chord (random quality)', min:false, ch:'rnd'}
+  };
+  var DISRUPTS=['Add ♭9 on the V','Switch to the other Type (A↔B)','Sing the 7th of each chord',
+    'Start on the 3rd, not the root','Drop out for 2 bars, re-enter cold','Target guide tones only (3rds & 7ths)',
+    'Add a chromatic enclosure','Change the rhythm — Charleston it','Play it rootless, no bass','Add ♯11 colour on the I'];
+
+  function rand(n){return Math.floor(Math.random()*n);}
+  function rootName(k,deg){var pc=(k.pc+deg)%12;return (k.acc==='sharp'?SHARP:FLAT)[pc];}
+
+  // ---- state ----
+  var curIdx=0, sess={jumps:0,clean:0,miss:0}, autoTimer=null, autoDeadline=0, autoDur=30;
+  var $=function(id){return document.getElementById(id);};
+
+  // populate family select
+  (function(){var sel=$('family');Object.keys(FAMILIES).forEach(function(key){
+    var o=document.createElement('option');o.value=key;o.textContent=FAMILIES[key].label;sel.appendChild(o);});
+    sel.value='minor';})();
+
+  function pickKey(){
+    var avoid4=$('avoid4').checked, noRep=$('noRepeat').checked, cur=KEYS[curIdx];
+    var cand=[];
+    for(var i=0;i<KEYS.length;i++){
+      if(noRep && i===curIdx) continue;
+      if(avoid4){var d=Math.abs(((KEYS[i].pc-cur.pc)%12+12)%12); if(d===5||d===7) continue;}
+      cand.push(i);
+    }
+    if(!cand.length){for(var j=0;j<KEYS.length;j++) if(j!==curIdx) cand.push(j);}
+    return cand[rand(cand.length)];
+  }
+
+  function render(){
+    var k=KEYS[curIdx], fam=FAMILIES[$('family').value];
+    $('keyName').textContent=k.name;
+    $('ctx').textContent=fam.label+(fam.min?'  ·  '+k.name+' minor':'  ·  '+k.name+' major');
+    var box=$('chords'); box.innerHTML='';
+    var list;
+    if(fam.ch==='rnd'){var suf=SINGLE[rand(SINGLE.length)];list=[[0,suf,'chord']];}
+    else list=fam.ch;
+    list.forEach(function(c){
+      var div=document.createElement('div');div.className='chip';
+      div.innerHTML=rootName(k,c[0])+c[1]+'<span class="deg">'+c[2]+'</span>';
+      box.appendChild(div);
+    });
+    $('typeBadge').textContent='Type '+(Math.random()<0.5?'A':'B');
+    if($('disruptOn').checked && Math.random()<0.4){$('disrupt').textContent='⚡ '+DISRUPTS[rand(DISRUPTS.length)];}
+    else $('disrupt').textContent='';
+  }
+
+  function jump(){curIdx=pickKey();sess.jumps++;updateStats();render();resetAuto();}
+
+  function mark(clean){ if(clean) sess.clean++; else sess.miss++; updateStats(); jump(); }
+
+  function updateStats(){
+    $('sJumps').textContent=sess.jumps;$('sClean').textContent=sess.clean;$('sMiss').textContent=sess.miss;
+    var t=sess.clean+sess.miss;$('sPct').textContent=t?Math.round(sess.clean/t*100)+'%':'—';
+  }
+
+  // ---- auto-advance ----
+  function resetAuto(){ autoDeadline=Date.now()+autoDur*1000; }
+  function tickAuto(){
+    var fill=$('countFill');
+    if(!$('autoOn').checked){fill.style.width='100%';return;}
+    var left=autoDeadline-Date.now();
+    if(left<=0){jump();return;}
+    fill.style.width=Math.max(0,(left/(autoDur*1000))*100)+'%';
+  }
+  setInterval(tickAuto,100);
+  $('autoSec').addEventListener('input',function(){autoDur=+this.value;$('autoSecLbl').textContent=autoDur;resetAuto();});
+  $('autoOn').addEventListener('change',function(){resetAuto();$('countFill').style.width='100%';});
+
+  // ---- metronome (Web Audio) ----
+  var ac=null, metOn=false, metTimer=null, beat=0, bpm=80;
+  var beatEls=document.querySelectorAll('.beat');
+  function click(acc){
+    if(!ac) return;
+    var o=ac.createOscillator(), g=ac.createGain(), t=ac.currentTime;
+    o.frequency.value=acc?1500:900; o.connect(g); g.connect(ac.destination);
+    g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.5,t+0.001);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+0.05); o.start(t); o.stop(t+0.06);
+  }
+  function metTick(){
+    beatEls.forEach(function(b,i){b.classList.toggle('on',i===beat);});
+    click(beat===0); beat=(beat+1)%4;
+  }
+  function startMet(){
+    if(!ac){try{ac=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}
+    if(ac && ac.state==='suspended') ac.resume();
+    metOn=true;$('metBtn').textContent='■ Stop';beat=0;
+    metTick(); metTimer=setInterval(metTick,60000/bpm);
+  }
+  function stopMet(){metOn=false;$('metBtn').textContent='▶ Start';clearInterval(metTimer);
+    beatEls.forEach(function(b){b.classList.remove('on');});}
+  $('metBtn').addEventListener('click',function(){metOn?stopMet():startMet();});
+  $('bpm').addEventListener('input',function(){bpm=+this.value;$('bpmLbl').textContent=bpm;
+    if(metOn){clearInterval(metTimer);metTimer=setInterval(metTick,60000/bpm);}});
+
+  // ---- scoreboard persistence ----
+  var LS='retrievalLog';
+  function loadLog(){try{return JSON.parse(localStorage.getItem(LS)||'[]');}catch(e){return [];}}
+  function saveLog(a){try{localStorage.setItem(LS,JSON.stringify(a));}catch(e){}}
+  function renderHist(){
+    var a=loadLog(),h=$('hist');
+    if(!a.length){h.innerHTML='<p class="mini">No saved sessions yet. Finish a block and hit “Save session to log”.</p>';return;}
+    var rows=a.slice().reverse().map(function(r){
+      return '<tr><td>'+r.date+'</td><td>'+r.clean+'/'+(r.clean+r.miss)+'</td><td>'+r.acc+'%</td><td>'+r.jumps+'</td></tr>';}).join('');
+    h.innerHTML='<table><tr><th>Date</th><th>Clean</th><th>Clean %</th><th>Jumps</th></tr>'+rows+'</table>';
+  }
+  $('saveBtn').addEventListener('click',function(){
+    var t=sess.clean+sess.miss; if(!sess.jumps){alert('Nothing to save yet.');return;}
+    var a=loadLog();
+    a.push({date:new Date().toLocaleDateString(),jumps:sess.jumps,clean:sess.clean,miss:sess.miss,
+      acc:t?Math.round(sess.clean/t*100):0});
+    saveLog(a);renderHist();alert('Session saved. Nice reps.');
+  });
+  $('resetBtn').addEventListener('click',function(){sess={jumps:0,clean:0,miss:0};updateStats();});
+  $('clearBtn').addEventListener('click',function(){if(confirm('Clear all saved history?')){saveLog([]);renderHist();}});
+
+  // ---- wire buttons + keys ----
+  $('nextBtn').addEventListener('click',jump);
+  $('cleanBtn').addEventListener('click',function(){mark(true);});
+  $('missBtn').addEventListener('click',function(){mark(false);});
+  $('family').addEventListener('change',render);
+  document.addEventListener('keydown',function(e){
+    if(e.target.tagName==='SELECT'||e.target.tagName==='INPUT') return;
+    if(e.code==='Space'){e.preventDefault();jump();}
+    else if(e.key==='c'||e.key==='C'){mark(true);}
+    else if(e.key==='m'||e.key==='M'){mark(false);}
+  });
+
+  // init
+  curIdx=rand(KEYS.length);render();updateStats();renderHist();resetAuto();$('countFill').style.width='100%';
+})();
+</script>
+</body>
+</html>
