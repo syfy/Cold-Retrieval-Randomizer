@@ -42,16 +42,16 @@
 (function(){
   "use strict";
   var SONGS=[
-    {t:"01 I-V-vi-IV in C",       rn:"I  –  V  –  vi  –  IV",            ch:"C  –  G  –  Am  –  F",       style:"Pop Ballad",   key:"C",  bpm:76,  music:"T44*A{C |G |A- |F }"},
-    {t:"02 vi-IV-I-V in C",       rn:"vi  –  IV  –  I  –  V",            ch:"Am  –  F  –  C  –  G",       style:"Pop Ballad",   key:"C",  bpm:76,  music:"T44*A{A- |F |C |G }"},
-    {t:"03 7sus-V-I in C",        rn:"V7sus  –  V7  –  Imaj7",           ch:"G7sus  –  G7  –  Cmaj7",     style:"Pop Ballad",   key:"C",  bpm:72,  music:"T44*A{G7sus |G7 |C^7 |C^7 }"},
-    {t:"04 IV-iv-I in C (6/8)",   rn:"IV  –  iv  –  I",                  ch:"F  –  Fm  –  C",             style:"Afro 12/8",    key:"C",  bpm:66,  music:"T68*A{F |F- |C |C }"},
-    {t:"05 I-III7-vi in C",       rn:"I  –  III7  –  vi",                ch:"C  –  E7  –  Am",            style:"Pop",          key:"C",  bpm:100, music:"T44*A{C |E7 |A- |A- }"},
-    {t:"06 Canon in C",           rn:"I–V–vi–iii–IV–I–IV–V",             ch:"C G Am Em F C F G",          style:"Even 8ths",    key:"C",  bpm:84,  music:"T44*A{C |G |A- |E- |F |C |F |G }"},
-    {t:"07 Backdoor ii-bVII7-I",  rn:"ii  –  bVII7  –  I",               ch:"Dm7  –  Bb7  –  Cmaj7",      style:"Gospel",       key:"C",  bpm:90,  music:"T44*A{D-7 |Bb7 |C^7 |C^7 }"},
-    {t:"08 Ragtime III7-VI7-II7-V7-I", rn:"III7–VI7–II7–V7–I",           ch:"E7 A7 D7 G7 C",              style:"Medium Swing", key:"C",  bpm:140, music:"T44*A{E7 |A7 |D7 |G7 |C }"},
-    {t:"09 Andalusian i-bVII-bVI-V in Am", rn:"i  –  bVII  –  bVI  –  V", ch:"Am  –  G  –  F  –  E7",      style:"Rock",         key:"A-", bpm:100, music:"T44*A{A- |G |F |E7 }"},
-    {t:"10 Tritone sub ii-bII7-I","rn":"ii  –  bII7  –  I",              ch:"Dm7  –  Db7  –  Cmaj7",      style:"Medium Swing", key:"C",  bpm:100, music:"T44*A{D-7 |Db7 |C^7 |C^7 }"}
+    {t:"01 I-V-vi-IV in C", rn:"I  –  V  –  vi  –  IV", ch:"C  –  G/B  –  Am7  –  Fadd9", style:"Pop Ballad", key:"C", bpm:76, music:"T44*A{C |G/B |A-7 |Fadd9 }"},
+    {t:"02 vi-IV-I-V in C", rn:"vi  –  IV  –  I  –  V", ch:"Am7  –  Fadd9  –  C/E  –  Gsus-G", style:"Pop Ballad", key:"C", bpm:76, music:"T44*A{A-7 |Fadd9 |C/E |Gsus G }"},
+    {t:"03 7sus-V-I in C", rn:"V7sus  –  V7  –  I", ch:"Gsus  –  G  –  Cadd9", style:"Pop Ballad", key:"C", bpm:72, music:"T44*A{Gsus |G |Cadd9 |Cadd9 }"},
+    {t:"04 IV-iv-I in C (6/8)", rn:"IV  –  iv  –  I", ch:"Fadd9  –  Fm  –  C/E  –  C", style:"Afro 12/8", key:"C", bpm:66, music:"T68*A{Fadd9 |F- |C/E |C }"},
+    {t:"05 I-III7-vi in C", rn:"I  –  III7  –  vi", ch:"Cadd9  –  E7b9  –  Am7", style:"Pop", key:"C", bpm:100, music:"T44*A{Cadd9 |E7b9 |A-7 |A-7 }"},
+    {t:"06 Canon in C", rn:"I–V–vi–iii–IV–I–IV–V", ch:"C – G/B – Am – Em/G – F – C/E – F – G", style:"Even 8ths", key:"C", bpm:84, music:"T44*A{C |G/B |A- |E-/G |F |C/E |F |G }"},
+    {t:"07 Backdoor ii-bVII7-I", rn:"ii  –  bVII7  –  I", ch:"Dm7  –  Bb13  –  Cmaj9", style:"Gospel", key:"C", bpm:90, music:"T44*A{D-7 |Bb13 |C^9 |C^9 }"},
+    {t:"08 Ragtime III7-VI7-II7-V7-I", rn:"III7–VI7–II7–V7–I", ch:"E7 A7 D7 G7 Cmaj7", style:"Medium Swing", key:"C", bpm:140, music:"T44*A{E7 |A7 |D7 |G7 |C^7 }"},
+    {t:"09 Andalusian i-bVII-bVI-V in Am", rn:"i  –  bVII  –  bVI  –  V", ch:"Am  –  G  –  F  –  E7#9", style:"Rock", key:"A-", bpm:100, music:"T44*A{A- |G |F |E7#9 }"},
+    {t:"10 Tritone sub ii-bII7-I", rn:"ii  –  bII7  –  I", ch:"Dm7  –  Db7#11  –  Cmaj7", style:"Medium Swing", key:"C", bpm:100, music:"T44*A{D-7 |Db7#11 |C^7 |C^7 }"}
   ];
   function rawURL(s){return "irealbook://"+s.t+"=Custom="+s.style+"="+s.key+"=n="+s.music;}
   var list=document.getElementById('list');
