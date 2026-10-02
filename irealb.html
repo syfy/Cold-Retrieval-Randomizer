@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>iReal Pro — Retrieval Progressions</title>
+<style>
+  :root{--bg:#0e1116;--panel:#171c24;--panel2:#1f2630;--line:#2a333f;--text:#e8edf4;--muted:#9aa7b6;--accent:#5b8cff;--green:#3fb950;--radius:14px;}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  .wrap{max-width:900px;margin:0 auto;padding:20px 16px 60px;}
+  h1{font-size:22px;margin:0 0 4px;}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 10px;line-height:1.6;}
+  .note{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--muted);margin:14px 0 22px;line-height:1.6;}
+  .note b{color:var(--text);}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:16px;display:flex;gap:18px;flex-wrap:wrap;align-items:center;}
+  .info{flex:1;min-width:260px;}
+  .title{font-size:17px;font-weight:700;margin:0 0 2px;}
+  .rn{color:var(--accent);font-weight:600;font-size:14px;margin:0 0 6px;}
+  .chords{font-size:20px;font-weight:700;letter-spacing:.01em;margin:2px 0 8px;}
+  .meta{color:var(--muted);font-size:13px;margin-bottom:12px;}
+  .meta .pill{display:inline-block;background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:3px 10px;margin-right:6px;}
+  a.btn{display:inline-block;text-decoration:none;background:var(--accent);color:#fff;font-weight:600;padding:10px 14px;border-radius:9px;font-size:14px;}
+  .raw{display:block;margin-top:10px;background:#0a0d12;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-family:monospace;font-size:11px;color:var(--muted);word-break:break-all;}
+  .copy{margin-top:8px;background:transparent;border:1px solid var(--line);color:var(--text);border-radius:8px;padding:7px 12px;font:inherit;font-size:13px;cursor:pointer;}
+  .qr{background:#fff;border-radius:10px;padding:8px;width:168px;height:168px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;}
+  .qr img{width:150px;height:150px;display:block;}
+  .qr .err{color:#333;font-size:11px;text-align:center;padding:6px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🎼 iReal Pro — Top 10 Retrieval Progressions</h1>
+  <p class="sub">Tap <b>Open in iReal Pro</b> on your iOS/Android/Mac device, or <b>scan the QR</b> with that device. Each imports as its own loopable chart.</p>
+  <div class="note">
+    <b>You're on Windows</b> — iReal Pro doesn't run here, so the links won't open on this PC. <b>Scan the QR codes</b> with the phone/tablet that has iReal Pro (QR images need internet). Set the suggested tempo in-app; practice at <b>80 bpm first</b> (your gate). Drive the key changes with your randomizer/die, not iReal's step-transpose. If any chart doesn't import on your version, tell me and I'll switch to the obfuscated <code>irealb://</code> format.
+  </div>
+  <div id="list"></div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var SONGS=[
+    {t:"01 I-V-vi-IV in C",       rn:"I  –  V  –  vi  –  IV",            ch:"C  –  G  –  Am  –  F",       style:"Pop Ballad",   key:"C",  bpm:76,  music:"T44*A{C |G |A- |F }"},
+    {t:"02 vi-IV-I-V in C",       rn:"vi  –  IV  –  I  –  V",            ch:"Am  –  F  –  C  –  G",       style:"Pop Ballad",   key:"C",  bpm:76,  music:"T44*A{A- |F |C |G }"},
+    {t:"03 7sus-V-I in C",        rn:"V7sus  –  V7  –  Imaj7",           ch:"G7sus  –  G7  –  Cmaj7",     style:"Pop Ballad",   key:"C",  bpm:72,  music:"T44*A{G7sus |G7 |C^7 |C^7 }"},
+    {t:"04 IV-iv-I in C (6/8)",   rn:"IV  –  iv  –  I",                  ch:"F  –  Fm  –  C",             style:"Afro 12/8",    key:"C",  bpm:66,  music:"T68*A{F |F- |C |C }"},
+    {t:"05 I-III7-vi in C",       rn:"I  –  III7  –  vi",                ch:"C  –  E7  –  Am",            style:"Pop",          key:"C",  bpm:100, music:"T44*A{C |E7 |A- |A- }"},
+    {t:"06 Canon in C",           rn:"I–V–vi–iii–IV–I–IV–V",             ch:"C G Am Em F C F G",          style:"Even 8ths",    key:"C",  bpm:84,  music:"T44*A{C |G |A- |E- |F |C |F |G }"},
+    {t:"07 Backdoor ii-bVII7-I",  rn:"ii  –  bVII7  –  I",               ch:"Dm7  –  Bb7  –  Cmaj7",      style:"Gospel",       key:"C",  bpm:90,  music:"T44*A{D-7 |Bb7 |C^7 |C^7 }"},
+    {t:"08 Ragtime III7-VI7-II7-V7-I", rn:"III7–VI7–II7–V7–I",           ch:"E7 A7 D7 G7 C",              style:"Medium Swing", key:"C",  bpm:140, music:"T44*A{E7 |A7 |D7 |G7 |C }"},
+    {t:"09 Andalusian i-bVII-bVI-V in Am", rn:"i  –  bVII  –  bVI  –  V", ch:"Am  –  G  –  F  –  E7",      style:"Rock",         key:"A-", bpm:100, music:"T44*A{A- |G |F |E7 }"},
+    {t:"10 Tritone sub ii-bII7-I","rn":"ii  –  bII7  –  I",              ch:"Dm7  –  Db7  –  Cmaj7",      style:"Medium Swing", key:"C",  bpm:100, music:"T44*A{D-7 |Db7 |C^7 |C^7 }"}
+  ];
+  function rawURL(s){return "irealbook://"+s.t+"=Custom="+s.style+"="+s.key+"=n="+s.music;}
+  var list=document.getElementById('list');
+  SONGS.forEach(function(s){
+    var scheme=encodeURI(rawURL(s));
+    var qr="https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=4&data="+encodeURIComponent(scheme);
+    var card=document.createElement('div'); card.className='card';
+    card.innerHTML=
+      '<div class="info">'+
+        '<p class="title">'+s.t+'</p>'+
+        '<p class="rn">'+s.rn+'</p>'+
+        '<div class="chords">'+s.ch+'</div>'+
+        '<div class="meta"><span class="pill">'+s.style+'</span><span class="pill">'+s.bpm+' bpm</span><span class="pill">key '+s.key+'</span></div>'+
+        '<a class="btn" href="'+scheme+'">▶ Open in iReal Pro</a>'+
+        '<code class="raw">'+scheme+'</code>'+
+        '<button class="copy">Copy link</button>'+
+      '</div>'+
+      '<div class="qr"><img alt="QR" src="'+qr+'" onerror="this.parentNode.innerHTML=\'<div class=&quot;err&quot;>QR needs internet.<br>Use the link above.</div>\'"></div>';
+    var btn=card.querySelector('.copy');
+    btn.addEventListener('click',function(){
+      navigator.clipboard.writeText(scheme).then(function(){btn.textContent='Copied ✓';setTimeout(function(){btn.textContent='Copy link';},1500);});
+    });
+    list.appendChild(card);
+  });
+})();
+</script>
+</body>
+</html>
