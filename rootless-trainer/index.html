@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rootless Voicing Gym</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>Rootless Voicing Gym</h1>
+    <p class="tagline">LH = 3 &amp; 7 &middot; RH = 5 &amp; 9</p>
+  </header>
+
+  <main class="layout">
+    <!-- LEFT: settings / modes -->
+    <aside class="panel settings">
+      <section class="block">
+        <h2>Mode</h2>
+        <div class="mode-tabs" id="modeTabs">
+          <button class="mode-tab" data-mode="atomic">Atomic</button>
+          <button class="mode-tab" data-mode="single">Single-quality</button>
+          <button class="mode-tab" data-mode="bridge">Rooted&rarr;Rootless</button>
+          <button class="mode-tab" data-mode="neighbors">Wrong neighbors</button>
+          <button class="mode-tab" data-mode="progression">Cold re-entry</button>
+        </div>
+        <p class="hint" id="modeDesc"></p>
+      </section>
+
+      <section class="block" id="singleQualityBlock" hidden>
+        <h2>Lock quality</h2>
+        <select id="singleQualitySelect"></select>
+      </section>
+
+      <section class="block" id="progressionBlock" hidden>
+        <h2>Progression template</h2>
+        <select id="progressionSelect">
+          <option value="1-6-2-5">1-6-2-5</option>
+          <option value="2-5-1">2-5-1</option>
+          <option value="3-6-2-5-1">3-6-2-5-1</option>
+          <option value="minor-ii-V-i">minor ii-V-i</option>
+        </select>
+        <label class="chk">
+          <input type="checkbox" id="breakConveyor" />
+          break the conveyor belt (avoid P4/P5 next root)
+        </label>
+      </section>
+
+      <section class="block">
+        <h2>Qualities</h2>
+        <div id="qualityChecks" class="quality-checks"></div>
+      </section>
+
+      <section class="block">
+        <h2>Auto-advance</h2>
+        <label class="range-row">
+          <span id="autoAdvanceLabel">20s</span>
+          <input type="range" id="autoAdvance" min="5" max="60" step="1" value="20" />
+        </label>
+        <label class="chk">
+          <input type="checkbox" id="autoAdvanceOn" />
+          auto-advance on
+        </label>
+      </section>
+
+      <section class="block">
+        <h2>Metronome</h2>
+        <label class="chk">
+          <input type="checkbox" id="metOn" />
+          metronome on
+        </label>
+        <label class="range-row">
+          <span id="bpmLabel">80 BPM</span>
+          <input type="range" id="bpm" min="40" max="160" step="1" value="80" />
+        </label>
+        <p class="hint">4 beats to find it @ 80</p>
+      </section>
+
+      <section class="block">
+        <label class="chk">
+          <input type="checkbox" id="typeABToggle" />
+          show Type A / Type B reference
+        </label>
+      </section>
+    </aside>
+
+    <!-- CENTER: flashcard -->
+    <section class="panel stage">
+      <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+
+      <div class="reentries">
+        <span class="reentries-num" id="reentryCount">0</span>
+        <span class="reentries-label">re-entries</span>
+      </div>
+
+      <div class="flashcard" id="flashcard">
+        <div class="chord-symbol" id="chordSymbol">&mdash;</div>
+        <div class="chord-context" id="chordContext"></div>
+        <div class="prog-line" id="progLine"></div>
+      </div>
+
+      <div class="controls-row">
+        <button class="btn primary" id="nextBtn">Next <kbd>Space</kbd></button>
+        <button class="btn" id="revealBtn">Reveal <kbd>R</kbd></button>
+        <button class="btn" id="hearBtn">Hear it <kbd>H</kbd></button>
+        <button class="btn" id="homeBtn">Hear home <kbd>G</kbd></button>
+      </div>
+
+      <div class="reveal" id="reveal" hidden>
+        <div class="notes-grid">
+          <div class="hand lh">
+            <h3>LH &mdash; guide tones (3 &amp; 7)</h3>
+            <div class="note-list" id="lhNotes"></div>
+          </div>
+          <div class="hand rh">
+            <h3>RH &mdash; color (5 &amp; 9)</h3>
+            <div class="note-list" id="rhNotes"></div>
+          </div>
+        </div>
+
+        <div class="piano" id="piano" aria-label="keyboard diagram"></div>
+
+        <div class="typeab" id="typeAB" hidden></div>
+        <div class="rooted" id="rootedForm" hidden></div>
+      </div>
+
+      <div class="rating">
+        <button class="btn green" id="rateGreen">Green <kbd>1</kbd></button>
+        <button class="btn yellow" id="rateYellow">Yellow <kbd>2</kbd></button>
+        <button class="btn red" id="rateRed">Red <kbd>3</kbd></button>
+      </div>
+    </section>
+
+    <!-- RIGHT: session -->
+    <aside class="panel session">
+      <h2>Session</h2>
+      <ul class="tally">
+        <li><span class="dot green"></span> clean <strong id="tallyGreen">0</strong></li>
+        <li><span class="dot yellow"></span> hesitant <strong id="tallyYellow">0</strong></li>
+        <li><span class="dot red"></span> missed <strong id="tallyRed">0</strong></li>
+      </ul>
+      <button class="btn ghost" id="resetBtn">Reset session</button>
+      <div class="microcopy">
+        <p>Count re-entries, not minutes</p>
+        <p>True random &mdash; not a fixed transpose</p>
+        <p>Comfort = disrupt</p>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="footbar">
+    <span>Space Next &middot; R Reveal &middot; H Hear &middot; G Home &middot; M Metronome &middot; 1/2/3 Rate</span>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
