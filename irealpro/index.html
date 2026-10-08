@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>iReal Pro — Retrieval Progressions</title>
+<style>
+  :root{--bg:#0e1116;--panel:#171c24;--panel2:#1f2630;--line:#2a333f;--text:#e8edf4;--muted:#9aa7b6;--accent:#5b8cff;--green:#3fb950;--radius:14px;}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  .wrap{max-width:900px;margin:0 auto;padding:20px 16px 60px;}
+  h1{font-size:22px;margin:0 0 4px;}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 10px;line-height:1.6;}
+  .note{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:13px;color:var(--muted);margin:14px 0 22px;line-height:1.6;}
+  .note b{color:var(--text);}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:16px;display:flex;gap:18px;flex-wrap:wrap;align-items:center;}
+  .info{flex:1;min-width:260px;}
+  .title{font-size:17px;font-weight:700;margin:0 0 2px;}
+  .rn{color:var(--accent);font-weight:600;font-size:14px;margin:0 0 6px;}
+  .chords{font-size:20px;font-weight:700;letter-spacing:.01em;margin:2px 0 8px;}
+  .meta{color:var(--muted);font-size:13px;margin-bottom:12px;}
+  .meta .pill{display:inline-block;background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:3px 10px;margin-right:6px;}
+  a.btn{display:inline-block;text-decoration:none;background:var(--accent);color:#fff;font-weight:600;padding:10px 14px;border-radius:9px;font-size:14px;}
+  .raw{display:block;margin-top:10px;background:#0a0d12;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-family:monospace;font-size:11px;color:var(--muted);word-break:break-all;}
+  .copy{margin-top:8px;background:transparent;border:1px solid var(--line);color:var(--text);border-radius:8px;padding:7px 12px;font:inherit;font-size:13px;cursor:pointer;}
+  .qr{background:#fff;border-radius:10px;padding:8px;width:168px;height:168px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;}
+  .qr img{width:150px;height:150px;display:block;}
+  .qr .err{color:#333;font-size:11px;text-align:center;padding:6px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🎼 iReal Pro — Retrieval Progressions (19 charts)</h1>
+  <p class="sub">Tap <b>Open in iReal Pro</b> on your iOS/Android/Mac device, or <b>scan the QR</b> with that device. Each imports as its own loopable chart.</p>
+  <div class="note">
+    <b>You're on Windows</b> — iReal Pro doesn't run here, so the links won't open on this PC. <b>Scan the QR codes</b> with the phone/tablet that has iReal Pro (QR images need internet). Set the suggested tempo in-app; practice at <b>80 bpm first</b> (your gate). Drive the key changes with your randomizer/die, not iReal's step-transpose. <b>Charts 11–13</b> come in three flavors: the <b>single-key</b> version (loop it, then blind-jump keys with your die — stage 4, retrieval), the <b>circle-of-4ths</b> 12-key run (stage 2, generalize), and the <b>chromatic</b> 12-key run (stage 3, de-automate). Use the two 12-key runs to <i>build</i> the shape; go back to single-key + die to make it <i>retrievable</i>. If any chart doesn't import on your version, tell me and I'll switch to the obfuscated <code>irealb://</code> format.
+  </div>
+  <div id="list"></div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var SONGS=[
+    {t:"01 I-V-vi-IV in C", rn:"I  –  V  –  vi  –  IV", ch:"C  –  G/B  –  Am7  –  Fadd9", style:"Pop Ballad", key:"C", bpm:76, music:"T44*A{C |G/B |A-7 |Fadd9 }"},
+    {t:"02 vi-IV-I-V in C", rn:"vi  –  IV  –  I  –  V", ch:"Am7  –  Fadd9  –  C/E  –  Gsus-G", style:"Pop Ballad", key:"C", bpm:76, music:"T44*A{A-7 |Fadd9 |C/E |Gsus G }"},
+    {t:"03 7sus-V-I in C", rn:"V7sus  –  V7  –  I", ch:"Gsus  –  G  –  Cadd9", style:"Pop Ballad", key:"C", bpm:72, music:"T44*A{Gsus |G |Cadd9 |Cadd9 }"},
+    {t:"04 IV-iv-I in C (6/8)", rn:"IV  –  iv  –  I", ch:"Fadd9  –  Fm  –  C/E  –  C", style:"Afro 12/8", key:"C", bpm:66, music:"T68*A{Fadd9 |F- |C/E |C }"},
+    {t:"05 I-III7-vi in C", rn:"I  –  III7  –  vi", ch:"Cadd9  –  E7b9  –  Am7", style:"Pop", key:"C", bpm:100, music:"T44*A{Cadd9 |E7b9 |A-7 |A-7 }"},
+    {t:"06 Canon in C", rn:"I–V–vi–iii–IV–I–IV–V", ch:"C – G/B – Am – Em/G – F – C/E – F – G", style:"Even 8ths", key:"C", bpm:84, music:"T44*A{C |G/B |A- |E-/G |F |C/E |F |G }"},
+    {t:"07 Backdoor ii-bVII7-I", rn:"ii  –  bVII7  –  I", ch:"Dm7  –  Bb13  –  Cmaj9", style:"Gospel", key:"C", bpm:90, music:"T44*A{D-7 |Bb13 |C^9 |C^9 }"},
+    {t:"08 Ragtime III7-VI7-II7-V7-I", rn:"III7–VI7–II7–V7–I", ch:"E7 A7 D7 G7 Cmaj7", style:"Medium Swing", key:"C", bpm:140, music:"T44*A{E7 |A7 |D7 |G7 |C^7 }"},
+    {t:"09 Andalusian i-bVII-bVI-V in Am", rn:"i  –  bVII  –  bVI  –  V", ch:"Am  –  G  –  F  –  E7#9", style:"Rock", key:"A-", bpm:100, music:"T44*A{A- |G |F |E7#9 }"},
+    {t:"10 Tritone sub ii-bII7-I", rn:"ii  –  bII7  –  I", ch:"Dm7  –  Db7#11  –  Cmaj7", style:"Medium Swing", key:"C", bpm:100, music:"T44*A{D-7 |Db7#11 |C^7 |C^7 }"},
+    {t:"11 I-vi-ii-V (1-6-2-5) in C", rn:"I  –  vi  –  ii  –  V", ch:"Cmaj7  –  Am7  –  Dm7  –  G7", style:"Medium Swing", key:"C", bpm:80, music:"T44*A{C^7 |A-7 |D-7 |G7 }"},
+    {t:"11b 1-6-2-5 Circle of 4ths (12 keys)", rn:"I  –  vi  –  ii  –  V   ·   12 keys, circle of 4ths", ch:"Cmaj7 – Am7 – Dm7 – G7  →  up a 4th each cycle", style:"Medium Swing", key:"C", bpm:80, music:"T44*A{C^7 |A-7 |D-7 |G7 |F^7 |D-7 |G-7 |C7 |Bb^7 |G-7 |C-7 |F7 |Eb^7 |C-7 |F-7 |Bb7 |Ab^7 |F-7 |Bb-7 |Eb7 |Db^7 |Bb-7 |Eb-7 |Ab7 |Gb^7 |Eb-7 |Ab-7 |Db7 |B^7 |G#-7 |C#-7 |F#7 |E^7 |C#-7 |F#-7 |B7 |A^7 |F#-7 |B-7 |E7 |D^7 |B-7 |E-7 |A7 |G^7 |E-7 |A-7 |D7 }"},
+    {t:"11c 1-6-2-5 Chromatic (12 keys)", rn:"I  –  vi  –  ii  –  V   ·   12 keys, chromatic ↑", ch:"Cmaj7 – Am7 – Dm7 – G7  →  up a half-step each cycle", style:"Medium Swing", key:"C", bpm:80, music:"T44*A{C^7 |A-7 |D-7 |G7 |Db^7 |Bb-7 |Eb-7 |Ab7 |D^7 |B-7 |E-7 |A7 |Eb^7 |C-7 |F-7 |Bb7 |E^7 |C#-7 |F#-7 |B7 |F^7 |D-7 |G-7 |C7 |Gb^7 |Eb-7 |Ab-7 |Db7 |G^7 |E-7 |A-7 |D7 |Ab^7 |F-7 |Bb-7 |Eb7 |A^7 |F#-7 |B-7 |E7 |Bb^7 |G-7 |C-7 |F7 |B^7 |G#-7 |C#-7 |F#7 }"},
+    {t:"12 ii-V-I (2-5-1) in C", rn:"ii  –  V  –  I", ch:"Dm7  –  G7  –  Cmaj7", style:"Medium Swing", key:"C", bpm:80, music:"T44*A{D-7 |G7 |C^7 |C^7 }"},
+    {t:"12b 2-5-1 Circle of 4ths (12 keys)", rn:"ii  –  V  –  I   ·   12 keys, circle of 4ths", ch:"Dm7 – G7 – Cmaj7  →  up a 4th each cycle", style:"Medium Swing", key:"C", bpm:80, music:"T44*A{D-7 |G7 |C^7 |G-7 |C7 |F^7 |C-7 |F7 |Bb^7 |F-7 |Bb7 |Eb^7 |Bb-7 |Eb7 |Ab^7 |Eb-7 |Ab7 |Db^7 |Ab-7 |Db7 |Gb^7 |C#-7 |F#7 |B^7 |F#-7 |B7 |E^7 |B-7 |E7 |A^7 |E-7 |A7 |D^7 |A-7 |D7 |G^7 }"},
+    {t:"12c 2-5-1 Chromatic (12 keys)", rn:"ii  –  V  –  I   ·   12 keys, chromatic ↑", ch:"Dm7 – G7 – Cmaj7  →  up a half-step each cycle", style:"Medium Swing", key:"C", bpm:80, music:"T44*A{D-7 |G7 |C^7 |Eb-7 |Ab7 |Db^7 |E-7 |A7 |D^7 |F-7 |Bb7 |Eb^7 |F#-7 |B7 |E^7 |G-7 |C7 |F^7 |Ab-7 |Db7 |Gb^7 |A-7 |D7 |G^7 |Bb-7 |Eb7 |Ab^7 |B-7 |E7 |A^7 |C-7 |F7 |Bb^7 |C#-7 |F#7 |B^7 }"},
+    {t:"13 iii-vi-ii-V-I (3-6-2-5-1) in C", rn:"iii  –  vi  –  ii  –  V  –  I", ch:"Em7  –  Am7  –  Dm7  –  G7  –  Cmaj7", style:"Medium Swing", key:"C", bpm:80, music:"T44*A{E-7 |A-7 |D-7 |G7 |C^7 }"},
+    {t:"13b 3-6-2-5-1 Circle of 4ths (12 keys)", rn:"iii  –  vi  –  ii  –  V  –  I   ·   12 keys, circle of 4ths", ch:"Em7 – Am7 – Dm7 – G7 – Cmaj7  →  up a 4th each cycle", style:"Medium Swing", key:"C", bpm:80, music:"T44*A{E-7 |A-7 |D-7 |G7 |C^7 |A-7 |D-7 |G-7 |C7 |F^7 |D-7 |G-7 |C-7 |F7 |Bb^7 |G-7 |C-7 |F-7 |Bb7 |Eb^7 |C-7 |F-7 |Bb-7 |Eb7 |Ab^7 |F-7 |Bb-7 |Eb-7 |Ab7 |Db^7 |Bb-7 |Eb-7 |Ab-7 |Db7 |Gb^7 |D#-7 |G#-7 |C#-7 |F#7 |B^7 |G#-7 |C#-7 |F#-7 |B7 |E^7 |C#-7 |F#-7 |B-7 |E7 |A^7 |F#-7 |B-7 |E-7 |A7 |D^7 |B-7 |E-7 |A-7 |D7 |G^7 }"},
+    {t:"13c 3-6-2-5-1 Chromatic (12 keys)", rn:"iii  –  vi  –  ii  –  V  –  I   ·   12 keys, chromatic ↑", ch:"Em7 – Am7 – Dm7 – G7 – Cmaj7  →  up a half-step each cycle", style:"Medium Swing", key:"C", bpm:80, music:"T44*A{E-7 |A-7 |D-7 |G7 |C^7 |F-7 |Bb-7 |Eb-7 |Ab7 |Db^7 |F#-7 |B-7 |E-7 |A7 |D^7 |G-7 |C-7 |F-7 |Bb7 |Eb^7 |G#-7 |C#-7 |F#-7 |B7 |E^7 |A-7 |D-7 |G-7 |C7 |F^7 |Bb-7 |Eb-7 |Ab-7 |Db7 |Gb^7 |B-7 |E-7 |A-7 |D7 |G^7 |C-7 |F-7 |Bb-7 |Eb7 |Ab^7 |C#-7 |F#-7 |B-7 |E7 |A^7 |D-7 |G-7 |C-7 |F7 |Bb^7 |D#-7 |G#-7 |C#-7 |F#7 |B^7 }"}
+  ];
+  function rawURL(s){return "irealbook://"+s.t+"=Custom="+s.style+"="+s.key+"=n="+s.music;}
+  var list=document.getElementById('list');
+  SONGS.forEach(function(s){
+    var scheme=encodeURI(rawURL(s));
+    var qr="https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=4&data="+encodeURIComponent(scheme);
+    var card=document.createElement('div'); card.className='card';
+    card.innerHTML=
+      '<div class="info">'+
+        '<p class="title">'+s.t+'</p>'+
+        '<p class="rn">'+s.rn+'</p>'+
+        '<div class="chords">'+s.ch+'</div>'+
+        '<div class="meta"><span class="pill">'+s.style+'</span><span class="pill">'+s.bpm+' bpm</span><span class="pill">key '+s.key+'</span></div>'+
+        '<a class="btn" href="'+scheme+'">▶ Open in iReal Pro</a>'+
+        '<code class="raw">'+scheme+'</code>'+
+        '<button class="copy">Copy link</button>'+
+      '</div>'+
+      '<div class="qr"><img alt="QR" src="'+qr+'" onerror="this.parentNode.innerHTML=\'<div class=&quot;err&quot;>QR needs internet.<br>Use the link above.</div>\'"></div>';
+    var btn=card.querySelector('.copy');
+    btn.addEventListener('click',function(){
+      navigator.clipboard.writeText(scheme).then(function(){btn.textContent='Copied ✓';setTimeout(function(){btn.textContent='Copy link';},1500);});
+    });
+    list.appendChild(card);
+  });
+})();
+</script>
+</body>
+</html>
